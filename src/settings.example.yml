@@ -1,0 +1,9 @@
+settings:
+  token: ''
+  prefix: '!'
+  nameBot: 'Dirk'
+  activity: 'Type !help for help'
+  host: ''
+  user: ''
+  password: ''
+  database: 'dirk'

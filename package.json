@@ -1,0 +1,44 @@
+{
+	"name": "discord-bot-ts",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"lint:gulp": "gulp lint",
+		"build:gulp": "gulp build",
+		"watch:gulp": "gulp watch",
+		"serve:gulp": "gulp serve",
+		"develop:gulp": "gulp develop",
+		"start:gulp": "gulp start",
+		"serve": "npm run serve:gulp -s",
+		"watch": "npm run watch:gulp -s",
+		"lint": "npm run lint:gulp -s",
+		"build": "npm run build:gulp -s",
+		"develop": "npm run develop:gulp -s",
+		"start": "npm run start:gulp -s"
+	},
+	"author": "wesley221",
+	"license": "MIT",
+	"devDependencies": {
+		"@types/bluebird": "^3.5.28",
+		"@types/debug": "0.0.30",
+		"@types/mysql": "^2.15.8",
+		"@types/node": "^9.6.5",
+		"@types/validator": "^10.11.3",
+		"@types/yamljs": "^0.2.30",
+		"debug": "^3.1.0",
+		"del": "^3.0.0",
+		"gulp": "^3.9.1",
+		"gulp-nodemon": "^2.2.1",
+		"gulp-sourcemaps": "^2.6.4",
+		"gulp-typescript": "^4.0.2",
+		"nodemon": "^1.17.3",
+		"typescript": "^2.8.1"
+	},
+	"dependencies": {
+		"discord.js": "^11.3.2",
+		"discord.js-commando": "^0.10.0",
+		"mysql": "^2.17.1",
+		"yamljs": "^0.3.0"
+	}
+}
