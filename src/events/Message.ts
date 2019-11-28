@@ -16,12 +16,23 @@ export class Message {
     constructor(client: CommandoClient, message: CommandMessage) {
         this.client = client;
         this.messageObject = message;
-        this.guildId = message.guild.id;
+
+        if(message.guild != null) {
+            this.guildId = message.guild.id;
+        }
+        else {
+            this.guildId = "0";
+        }
+        
         this.channelId = message.channel.id;
         this.message = message.content;
     }
 
     async start() {
+        // Check if the author is a bot
+        if(this.messageObject.author.bot)
+            return;
+
         const mysql = new MySQL();
 
         if(this.isCommandMessage(this.message)) {
