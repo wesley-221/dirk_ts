@@ -1,7 +1,6 @@
 import { CommandoClient } from "discord.js-commando";
 import { GuildMember, Guild } from "discord.js";
 import { MySQL } from "../models/MySQL";
-import { sendEmbed } from "../models/Misc";
 
 export class ServerJoin {
     private client: CommandoClient;
