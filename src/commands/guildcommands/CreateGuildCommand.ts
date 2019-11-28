@@ -33,6 +33,11 @@ module.exports = class CreateGuildCommandCommand extends Command {
     }
 
     public async run(message: CommandMessage, args: { commandName: string, message: string }): Promise<Message | Message[]> {
+        // Check for "static" commands
+        if(this.client.registry.findCommands(args.commandName).length > 0) {
+            return sendEmbedError(message, `The command \`${args.commandName}\` already exists. Please try a different name.`);
+        }
+        
         const mysql = new MySQL();
         const [command]: any = await mysql.query('SELECT * FROM command WHERE commandName = ? AND commandType = "guild"', [args.commandName]);
 
