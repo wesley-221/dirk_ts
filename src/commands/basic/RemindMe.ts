@@ -48,16 +48,18 @@ module.exports = class RemindMeCommand extends Command {
         }
 
         setTimeout(() => {
-            this.client.users.find(u => u.id == message.author.id).sendEmbed({
-                author: {
-                    name: 'Reminder'
-                },
-                thumbnail: {
-                    url: this.client.user.avatarURL
-                },
-                description: reminderMessage,
-                color: 0xFF0000,
-                timestamp: new Date()
+            this.client.users.find(u => u.id == message.author.id).send({
+                "embed": {
+                    author: {
+                        name: 'Reminder'
+                    },
+                    thumbnail: {
+                        url: this.client.user.avatarURL
+                    },
+                    description: reminderMessage,
+                    color: 0xFF0000,
+                    timestamp: new Date()
+                }
             });
         }, finalTime);
 
