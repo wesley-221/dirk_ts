@@ -1,11 +1,12 @@
 'use strict'
 
-import { CommandoClient } from 'discord.js-commando';
+import { CommandoClient, CommandMessage } from 'discord.js-commando';
 import * as debug from 'debug';
 import * as path from 'path';
 import * as YAML from 'yamljs';
 import { ServerJoin } from './events/ServerJoin';
 import { ServerLeave } from './events/ServerLeave';
+import { Message } from './events/Message';
 
 // DEBUG PREPARE
 // ----------------------------------------------------------------------------
@@ -60,6 +61,11 @@ export class DiscordTS {
 			const serverLeave = new ServerLeave(this.client, member);
 			await serverLeave.start();
 		})
+
+		this.client.on('message', async (msg: CommandMessage) => {
+			const message = new Message(this.client, msg);
+			await message.start();
+		});
 
 		process.on('exit', () => {
 			logEvent(`[${ this.config.settings.nameBot }] Process exit.`);

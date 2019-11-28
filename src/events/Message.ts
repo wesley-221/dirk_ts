@@ -1,0 +1,57 @@
+import { CommandoClient, CommandMessage } from "discord.js-commando";
+import { MySQL } from "../models/MySQL";
+
+export enum CommandTypes {
+    Global = "global",
+    Guild = "guild"
+}
+
+export class Message {
+    private client: CommandoClient;
+    private messageObject: CommandMessage;
+    private guildId: string;
+    private channelId: string;
+    private message: string;
+
+    constructor(client: CommandoClient, message: CommandMessage) {
+        this.client = client;
+        this.messageObject = message;
+        this.guildId = message.guild.id;
+        this.channelId = message.channel.id;
+        this.message = message.content;
+    }
+
+    async start() {
+        const mysql = new MySQL();
+
+        if(this.isCommandMessage(this.message)) {
+            const commandMessage = this.message.slice(this.client.commandPrefix.length, this.message.length);
+
+            // Check if a "static" command was run
+            if(this.client.registry.findCommands(commandMessage).length > 0) {
+                return;
+            }
+
+            const [dbCommand]: any = await mysql.query('SELECT * FROM command WHERE commandName = ?', [commandMessage]);
+
+            // Check if the command actually exists
+            if(dbCommand != undefined) {
+                // Command is a global command, execute anywhere
+                if(dbCommand.commandType == CommandTypes.Global) {
+                    this.messageObject.channel.send(dbCommand.commandMessage);
+                }
+                // Command is a guild specific command, check for appropriate guild
+                else {
+                    // The command is run in the appropriate guild
+                    if(dbCommand.serverID == this.guildId) {
+                        this.messageObject.channel.send(dbCommand.commandMessage);
+                    }
+                }
+            }
+        }
+    }
+
+    private isCommandMessage(message: string) {
+        return message.startsWith(this.client.commandPrefix);
+    }
+}
