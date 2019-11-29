@@ -22,6 +22,10 @@ module.exports = class DeleteTeamCommand extends Command {
         });
     }
 
+    public hasPermission(message: CommandMessage) {
+        return message.member.hasPermissions(['ADMINISTRATOR']);
+    }
+
     public async run(message: CommandMessage, args: { teamName: string }): Promise<Message | Message[]> {
         if(message.guild.channels.filter(c => c.name == args.teamName).size == 0) {
             return sendEmbedError(message, `The team "${args.teamName}" doesn't exist. Please try again.`);

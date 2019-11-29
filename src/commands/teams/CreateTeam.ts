@@ -28,6 +28,10 @@ module.exports = class CreateTeamCommand extends Command {
         });
     }
 
+    public hasPermission(message: CommandMessage) {
+        return message.member.hasPermissions(['ADMINISTRATOR']);
+    }
+
     public async run(message: CommandMessage, args: { teamName: string, mentions: string }): Promise<Message | Message[]> {
         if(message.guild.channels.filter(c => c.name == args.teamName).size > 0) {
             return sendEmbedError(message, `The team "${args.teamName}" already exists. Please try again.`);

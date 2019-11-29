@@ -14,7 +14,7 @@ module.exports = class SetupServerCommand extends Command {
     }
 
     public hasPermission(message: CommandMessage) {
-        return message.member.hasPermission(['MANAGE_CHANNELS']);
+        return message.member.hasPermission(['ADMINISTRATOR']);
     }
 
     public async run(message: CommandMessage, args: { status: string, message: string }): Promise<Message | Message[]> {
