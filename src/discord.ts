@@ -46,7 +46,8 @@ export class DiscordTS {
 			['owner', 'Commands for the owner'],
 			['serversetup', 'Various commands to manage a server'],
 			['globalcommands', 'Manage dynamic global commands'],
-			['guildcommands', 'Manage dynamic guild commands']
+			['guildcommands', 'Manage dynamic guild commands'],
+			['teams', 'Manage team channels']
 		]).registerDefaults().registerCommandsIn(path.join(__dirname, 'commands'));
 
 		this.client.on('error', logError);
