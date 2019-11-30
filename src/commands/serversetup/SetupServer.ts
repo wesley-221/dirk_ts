@@ -1,6 +1,8 @@
 import { Command, CommandoClient, CommandMessage } from 'discord.js-commando';
 import { Message, Role } from 'discord.js';
 import { sendEmbedError } from '../../models/Misc';
+import { ServerPermissionRole } from '../../models/ServerPermissionRole';
+import { CacheService } from '../../services/cache';
 
 module.exports = class SetupServerCommand extends Command {
     constructor(client: CommandoClient) {
@@ -14,7 +16,9 @@ module.exports = class SetupServerCommand extends Command {
     }
 
     public hasPermission(message: CommandMessage) {
-        return message.member.hasPermission(['ADMINISTRATOR']);
+        const serverPermissionRole: ServerPermissionRole | null = (<CacheService>(<any>this.client).cache).getServerPermission(message.guild.id);
+
+        return ((serverPermissionRole != null && message.member.roles.get(serverPermissionRole.getAdministratorRole()) != undefined) || message.member.hasPermission(['ADMINISTRATOR']));
     }
 
     public async run(message: CommandMessage, args: { status: string, message: string }): Promise<Message | Message[]> {
