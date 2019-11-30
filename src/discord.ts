@@ -27,7 +27,7 @@ export class DiscordTS {
 
 		this.client = new CommandoClient({
 			owner: '88662320791707648',
-			commandPrefix: this.config.prefix,
+			commandPrefix: this.config.settings.prefix,			
 			unknownCommandResponse: false
 		});
 	}
