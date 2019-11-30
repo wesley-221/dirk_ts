@@ -1,0 +1,69 @@
+import { Command, CommandoClient, CommandMessage } from 'discord.js-commando';
+import { Message, Role } from 'discord.js';
+import { sendEmbedSuccess } from '../../models/Misc';
+import { MySQL } from '../../models/MySQL';
+import { ServerPermissionRole } from '../../models/ServerPermissionRole';
+import { CacheService } from '../../services/cache';
+
+module.exports = class SetupRolesCommand extends Command {
+    constructor(client: CommandoClient) {
+        super(client, {
+            name: 'setuproles',
+            group: 'serversetup', 
+            memberName: 'setuproles',
+            description: 'Setup various moderation roles with the server roles',
+            guildOnly: true, 
+            args: [
+                {
+                    key: "moderatorRole",
+                    label: "moderator role", 
+                    prompt: "Mention the role that is considered a moderator. \n**Note:** the role has to be mentionable, you can remove this once this is set up.",
+                    type: "role",
+                    min: 3,
+                    max: 20
+                },
+                {
+                    key: "administratorRole",
+                    label: "administrator role", 
+                    prompt: "Mention the role that is considered an administrator. \n**Note:** the role has to be mentionable, you can remove this once this is set up.",
+                    type: "role",
+                    min: 3,
+                    max: 20
+                },
+            ]
+        });
+    }
+
+    public hasPermission(message: CommandMessage) {
+        const serverPermissionRole: ServerPermissionRole | null = (<CacheService>(<any>this.client).cache).getServerPermission(message.guild.id);
+
+        return ((serverPermissionRole != null && message.member.roles.get(serverPermissionRole.getAdministratorRole()) != undefined) || message.member.hasPermission(['ADMINISTRATOR']));
+    }
+
+    public async run(message: CommandMessage, args: { moderatorRole: Role, administratorRole: Role }): Promise<Message | Message[]> {
+        const mysql = new MySQL();
+
+        const [settingsExist]: any = await mysql.query('SELECT * FROM permissionroles WHERE serverID = ?', [message.guild.id]);
+
+        if(settingsExist != undefined) {
+            await mysql.query('UPDATE permissionroles SET moderatorRole = ?, administratorRole = ? WHERE serverID = ?', [
+                args.moderatorRole.id,
+                args.administratorRole.id,
+                message.guild.id
+            ]);
+
+            (<CacheService>(<any>this.client).cache).updateServerPermission(new ServerPermissionRole(message.guild.id, args.moderatorRole.id, args.administratorRole.id));
+        }
+        else {
+            await mysql.query('INSERT INTO permissionroles SET serverID = ?, moderatorRole = ?, administratorRole = ?', [
+                message.guild.id,
+                args.moderatorRole.id,
+                args.administratorRole.id,
+            ]);
+
+            (<CacheService>(<any>this.client).cache).addServerPermission(new ServerPermissionRole(message.guild.id, args.moderatorRole.id, args.administratorRole.id));
+        }
+
+        return sendEmbedSuccess(message, `Successfully updated the roles for moderator and administrator.`);
+    }
+};
