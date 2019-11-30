@@ -60,6 +60,6 @@ export class Permission {
             }
         }
 
-        return permissionLevel > requiredPermission || message.member.hasPermissions(['ADMINISTRATOR']);
+        return permissionLevel > requiredPermission || message.member.hasPermission(['ADMINISTRATOR']);
     }
 }
