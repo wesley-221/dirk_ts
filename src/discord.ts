@@ -7,6 +7,7 @@ import * as YAML from 'yamljs';
 import { ServerJoin } from './events/ServerJoin';
 import { ServerLeave } from './events/ServerLeave';
 import { Message } from './events/Message';
+import { CacheService } from './services/cache';
 
 // DEBUG PREPARE
 // ----------------------------------------------------------------------------
@@ -31,7 +32,7 @@ export class DiscordTS {
 		});
 	}
 
-	public start(): void {
+	public async start() {
 		logSystem('Starting bot...');
 
 		this.client.on('ready', () => {
@@ -67,6 +68,12 @@ export class DiscordTS {
 			const message = new Message(this.client, msg);
 			await message.start();
 		});
+
+		// Setup cache
+		const cache = new CacheService();
+		await cache.initialize();
+
+		(<any>this.client).cache = cache;
 
 		process.on('exit', () => {
 			logEvent(`[${ this.config.settings.nameBot }] Process exit.`);
