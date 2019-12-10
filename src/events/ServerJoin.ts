@@ -17,9 +17,9 @@ export class ServerJoin {
     async start() {
         const mysql = new MySQL();
 
-        const [welcome]: any = await mysql.query('SELECT serverID, channelID, welcomeMessage FROM wmtoggle WHERE serverID = ? AND welcomeEnabled = 1', [this.guildId]);
+        const [welcome]: any = await mysql.query('SELECT * FROM wmtoggle WHERE serverID = ?', [this.guildId]);
 
-        if(welcome) {
+        if(welcome && welcome.welcomeEnabled == 1) {
             const parsedMessage = welcome.welcomeMessage
 										.replace("{{user}}", `<@${this.newMember.user.id}>`)
 										.replace("{{tag}}", `${this.newMember.user.tag}`)
@@ -38,6 +38,14 @@ export class ServerJoin {
                     timestamp: new Date()
                 }
             });
+        }
+
+        if(welcome && welcome.welcomeRole != null) {
+            const role = this.newMember.guild.roles.get(welcome.welcomeRole);
+
+            if(role != undefined) {
+                this.newMember.addRole(role);
+            }
         }
     }
 }
