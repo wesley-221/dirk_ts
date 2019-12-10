@@ -15,8 +15,7 @@ const project = gulpTS.createProject('tsconfig.json')
 
 // BUILD
 // ----------------------------------------------------------------------------
-gulp.task('build', () => {
-	// => Delete old files
+gulp.task('build', gulp.series(() => {
 	del.sync(['./build/**/*.*'])
 	// => Copy files
 	gulp.src('./src/**/*.yml')
@@ -31,37 +30,37 @@ gulp.task('build', () => {
 			file.base)
 		}))
 		.pipe(gulp.dest('build/'))
-})
+}));
 
 // WATCH
-// ----------------------------------------------------------------------------
-gulp.task('watch', ['build'], function() {
-	gulp.watch('./src/**/*.ts', ['build'])
-})
+// // ----------------------------------------------------------------------------
+gulp.task('watch', gulp.series(['build'], () => {
+	gulp.watch('./src/**/*.ts', gulp.series(['build']));
+}));
 
 // START
 // ----------------------------------------------------------------------------
-gulp.task('start', ['build'], function() {
+gulp.task('start', gulp.series(['build'], () => {
 	return gulpNodemon({
 		script: './build/index.js',
 		watch: './build/index.js'
 	})
-})
+}));
 
 // DEVELOP
 // ----------------------------------------------------------------------------
-gulp.task('develop', ['build'], function() {
+gulp.task('develop', gulp.series(['build'], () => {
 	return gulpNodemon({
 		script: './build/index.js', 
 		watch: './build/**/*.js'
 	})
-})
+}));
 
 // SERVER
 // ----------------------------------------------------------------------------
-gulp.task('serve', ['watch'], function() {
+gulp.task('serve', gulp.series(['build'], () => {
 	return gulpNodemon({
 		script: './build/index.js',
 		watch: './build/'
 	})
-});
+}));
