@@ -38,7 +38,7 @@ module.exports = class WelcomeRoleCommand extends Command {
             const [recordExist]: any = await mysql.query('SELECT welcomeRole FROM wmtoggle WHERE serverID = ?', [message.guild.id]);
 
             if(!recordExist) {
-                await mysql.query('INSERT INTO wmtoggle SET serverID = ?, welcomeRole = ?', [message.guild.id, role.id]);
+                await mysql.query('INSERT INTO wmtoggle SET serverID = ?, channelID = ?, welcomeRole = ?', [message.guild.id, message.channel.id, role.id]);
             }
             else {
                 await mysql.query('UPDATE wmtoggle SET welcomeRole = ? WHERE serverID = ?', [role.id, message.guild.id]);
