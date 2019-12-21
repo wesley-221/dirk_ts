@@ -27,7 +27,7 @@ module.exports = class CreateGlobalCommandCommand extends Command {
                     prompt: "Enter the message that will be send when the command is executed",
                     type: "string", 
                     min: 3, 
-                    max: 50
+                    max: 300
                 }
             ]
         });

@@ -26,8 +26,8 @@ module.exports = class CreateGuildCommandCommand extends Command {
                     label: "message",
                     prompt: "Enter the message that will be send when the command is executed",
                     type: "string", 
-                    min: 3, 
-                    max: 50
+                    min: 3,
+                    max: 300
                 }
             ]
         });
