@@ -6,18 +6,18 @@ export class ServerJoin {
     private client: CommandoClient;
     private newMember: GuildMember;
     private guildId: string;
+    private mysql: MySQL;
 
     constructor(client: CommandoClient, member: GuildMember) {
         this.client = client;
         this.newMember = member;
 
         this.guildId = member.guild.id;
+        this.mysql = new MySQL(client);
     }
 
     async start() {
-        const mysql = new MySQL();
-
-        const [welcome]: any = await mysql.query('SELECT * FROM wmtoggle WHERE serverID = ?', [this.guildId]);
+        const [welcome]: any = await this.mysql.query('SELECT * FROM wmtoggle WHERE serverID = ?', [this.guildId]);
 
         if(welcome && welcome.welcomeEnabled == 1) {
             const parsedMessage = welcome.welcomeMessage

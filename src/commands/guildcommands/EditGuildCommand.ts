@@ -6,6 +6,8 @@ import { DynamicCommand, CommandType } from '../../models/DynamicCommand';
 import { Permission, PermissionNames } from '../../models/Permission';
 
 module.exports = class EditGuildCommandCommand extends Command {
+    private mysql: MySQL;
+
     constructor(client: CommandoClient) {
         super(client, {
             name: 'editguildcommand',
@@ -31,6 +33,8 @@ module.exports = class EditGuildCommandCommand extends Command {
                 }
             ]
         });
+
+        this.mysql = new MySQL(client);
     }
 
     public hasPermission(message: CommandMessage) {
@@ -39,11 +43,10 @@ module.exports = class EditGuildCommandCommand extends Command {
     }
 
     public async run(message: CommandMessage, args: { commandName: string, message: string }): Promise<Message | Message[]> {
-        const mysql = new MySQL();
-        const [command]: any = await mysql.query('SELECT * FROM command WHERE commandName = ? AND commandType = "guild"', [args.commandName]);
+        const [command]: any = await this.mysql.query('SELECT * FROM command WHERE commandName = ? AND commandType = "guild"', [args.commandName]);
 
         if(command) {
-            const newCommand = new DynamicCommand(message.guild.id, args.commandName, CommandType.Guild, args.message, message.author.id);
+            const newCommand = new DynamicCommand(this.client, message.guild.id, args.commandName, CommandType.Guild, args.message, message.author.id);
             await newCommand.update();
 
             return sendEmbedSuccess(message, `Successfully edited the guild command \`${args.commandName}\`: \`${args.message}\`.`);

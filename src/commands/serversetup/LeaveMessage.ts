@@ -5,6 +5,8 @@ import { MySQL } from '../../models/MySQL';
 import { PermissionNames, Permission } from '../../models/Permission';
 
 module.exports = class LeaveMessageCommand extends Command {
+    private mysql: MySQL;
+
     constructor(client: CommandoClient) {
         super(client, {
             name: 'leavemessage',
@@ -28,6 +30,8 @@ module.exports = class LeaveMessageCommand extends Command {
                 }
             ]
         });
+
+        this.mysql = new MySQL(client);
     }
 
     public hasPermission(message: CommandMessage) {
@@ -36,14 +40,12 @@ module.exports = class LeaveMessageCommand extends Command {
     }
 
     public async run(message: CommandMessage, args: { status: string, message: string }): Promise<Message | Message[]> {
-        const mysql = new MySQL();
-
         if(args.status == "enable") {
-            const [recordExist]: any = await mysql.query('SELECT leaveEnabled FROM wmtoggle WHERE serverID = ? AND channelID = ?', [message.guild.id, message.channel.id]);
+            const [recordExist]: any = await this.mysql.query('SELECT leaveEnabled FROM wmtoggle WHERE serverID = ? AND channelID = ?', [message.guild.id, message.channel.id]);
 
             // There is no record yet, insert new one
             if(!recordExist) {
-                await mysql.query('INSERT INTO wmtoggle SET serverID = ?, channelID = ?, leaveEnabled = 1, leaveMessage = ?', [
+                await this.mysql.query('INSERT INTO wmtoggle SET serverID = ?, channelID = ?, leaveEnabled = 1, leaveMessage = ?', [
                     message.guild.id, 
                     message.channel.id,
                     args.message
@@ -53,7 +55,7 @@ module.exports = class LeaveMessageCommand extends Command {
             }
             // There is a record, update the existing one
             else {
-                await mysql.query('UPDATE wmtoggle SET leaveEnabled = 1, leaveMessage = ? WHERE serverID = ? AND channelID = ?', [
+                await this.mysql.query('UPDATE wmtoggle SET leaveEnabled = 1, leaveMessage = ? WHERE serverID = ? AND channelID = ?', [
                     args.message,
                     message.guild.id, 
                     message.channel.id
@@ -63,11 +65,11 @@ module.exports = class LeaveMessageCommand extends Command {
             }
         }
         else if(args.status == "disable") {
-            const [recordExist]: any = await mysql.query('SELECT leaveEnabled FROM wmtoggle WHERE serverID = ? AND channelID = ?', [message.guild.id, message.channel.id]);
+            const [recordExist]: any = await this.mysql.query('SELECT leaveEnabled FROM wmtoggle WHERE serverID = ? AND channelID = ?', [message.guild.id, message.channel.id]);
 
             // There is no record yet, insert new one
             if(!recordExist) {
-                await mysql.query('INSERT INTO wmtoggle SET serverID = ?, channelID = ?, leaveEnabled = 0', [
+                await this.mysql.query('INSERT INTO wmtoggle SET serverID = ?, channelID = ?, leaveEnabled = 0', [
                     message.guild.id, 
                     message.channel.id,
                 ]);
@@ -76,7 +78,7 @@ module.exports = class LeaveMessageCommand extends Command {
             }
             // There is a record, update the existing one
             else {
-                await mysql.query('UPDATE wmtoggle SET leaveEnabled = 0 WHERE serverID = ? AND channelID = ?', [
+                await this.mysql.query('UPDATE wmtoggle SET leaveEnabled = 0 WHERE serverID = ? AND channelID = ?', [
                     message.guild.id, 
                     message.channel.id
                 ]);

@@ -4,6 +4,7 @@ import { CommandoClient, CommandMessage } from 'discord.js-commando';
 import * as debug from 'debug';
 import * as path from 'path';
 import * as YAML from 'yamljs';
+import * as mysql from 'mysql';
 import { ServerJoin } from './events/ServerJoin';
 import { ServerLeave } from './events/ServerLeave';
 import { Message } from './events/Message';
@@ -42,6 +43,8 @@ export class DiscordTS {
 			this.client.user.setActivity(this.config.settings.activity);
 		});
 
+		// Register command groups
+		// ----------------------------------------------------------------------------
 		this.client.registry.registerGroups([
 			['basic', 'Basic commands'],
 			['owner', 'Commands for the owner'],
@@ -51,9 +54,36 @@ export class DiscordTS {
 			['teams', 'Manage team channels']
 		]).registerDefaults().registerCommandsIn(path.join(__dirname, 'commands'));
 
+		// Setup logging
+		// ----------------------------------------------------------------------------
 		this.client.on('error', logError);
 		this.client.on('warn', logWarn);
 
+		// Create the mysql pool 
+		// ----------------------------------------------------------------------------
+		(<any>this.client).pool = mysql.createPool({
+            connectionLimit: 10,
+            host: this.config.settings.host,
+            user: this.config.settings.user,
+            password: this.config.settings.password, 
+            database: this.config.settings.database,
+            supportBigNumbers: true
+        });
+
+        (<any>this.client).pool.getConnection((err: Error, connection: any) => {
+            if(err) console.log(err);
+            if(connection) connection.release();
+		});
+		
+		// Setup cache
+		// ----------------------------------------------------------------------------
+		const cache = new CacheService(this.client);
+		await cache.initialize();
+
+		(<any>this.client).cache = cache;
+
+		// Setup various listeners
+		// ----------------------------------------------------------------------------
 		this.client.on('guildMemberAdd', async (member) => {
 			const serverJoin = new ServerJoin(this.client, member);
 			await serverJoin.start();
@@ -69,12 +99,8 @@ export class DiscordTS {
 			await message.start();
 		});
 
-		// Setup cache
-		const cache = new CacheService();
-		await cache.initialize();
-
-		(<any>this.client).cache = cache;
-
+		// Setup logging and stuff
+		// ----------------------------------------------------------------------------
 		process.on('exit', () => {
 			logEvent(`[${ this.config.settings.nameBot }] Process exit.`);
 			this.client.destroy();

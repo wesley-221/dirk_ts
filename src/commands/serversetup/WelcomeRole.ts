@@ -5,6 +5,8 @@ import { MySQL } from '../../models/MySQL';
 import { Permission, PermissionNames } from '../../models/Permission';
 
 module.exports = class WelcomeRoleCommand extends Command {
+    private mysql: MySQL;
+
     constructor(client: CommandoClient) {
         super(client, {
             name: 'welcomerole',
@@ -21,6 +23,8 @@ module.exports = class WelcomeRoleCommand extends Command {
                 }
             ]
         });
+        
+        this.mysql = new MySQL(client);
     }
 
     public hasPermission(message: CommandMessage) {
@@ -29,19 +33,18 @@ module.exports = class WelcomeRoleCommand extends Command {
     }
 
     public async run(message: CommandMessage, args: { role: string }): Promise<Message | Message[]> {
-        const   mysql = new MySQL(),
-                roleId = args.role.replace(/[<|@|&|>]/g, '');
+        const roleId = args.role.replace(/[<|@|&|>]/g, '');
 
         const role = message.guild.roles.get(roleId);
 
         if(role != undefined) {
-            const [recordExist]: any = await mysql.query('SELECT welcomeRole FROM wmtoggle WHERE serverID = ?', [message.guild.id]);
+            const [recordExist]: any = await this.mysql.query('SELECT welcomeRole FROM wmtoggle WHERE serverID = ?', [message.guild.id]);
 
             if(!recordExist) {
-                await mysql.query('INSERT INTO wmtoggle SET serverID = ?, channelID = ?, welcomeRole = ?', [message.guild.id, message.channel.id, role.id]);
+                await this.mysql.query('INSERT INTO wmtoggle SET serverID = ?, channelID = ?, welcomeRole = ?', [message.guild.id, message.channel.id, role.id]);
             }
             else {
-                await mysql.query('UPDATE wmtoggle SET welcomeRole = ? WHERE serverID = ?', [role.id, message.guild.id]);
+                await this.mysql.query('UPDATE wmtoggle SET welcomeRole = ? WHERE serverID = ?', [role.id, message.guild.id]);
             }
 
             return sendEmbedSuccess(message, `I will now add the role <@&${role.id}> whenever someone joins this server.`);

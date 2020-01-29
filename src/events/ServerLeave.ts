@@ -6,18 +6,18 @@ export class ServerLeave {
     private client: CommandoClient;
     private newMember: GuildMember;
     private guildId: string;
+    private mysql: MySQL;
 
     constructor(client: CommandoClient, member: GuildMember) {
         this.client = client;
         this.newMember = member;
 
         this.guildId = member.guild.id;
+        this.mysql = new MySQL(client);
     }
 
     async start() {
-        const mysql = new MySQL();
-
-        const [leave]: any = await mysql.query('SELECT serverID, channelID, leaveMessage FROM wmtoggle WHERE serverID = ? AND leaveEnabled = 1', [this.guildId]);
+        const [leave]: any = await this.mysql.query('SELECT serverID, channelID, leaveMessage FROM wmtoggle WHERE serverID = ? AND leaveEnabled = 1', [this.guildId]);
 
         if(leave) {
             const parsedMessage = leave.leaveMessage

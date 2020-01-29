@@ -7,6 +7,8 @@ import { CacheService } from '../../services/cache';
 import { PermissionNames, Permission } from '../../models/Permission';
 
 module.exports = class SetupRolesCommand extends Command {
+    private mysql: MySQL;
+
     constructor(client: CommandoClient) {
         super(client, {
             name: 'setuproles',
@@ -33,6 +35,8 @@ module.exports = class SetupRolesCommand extends Command {
                 },
             ]
         });
+
+        this.mysql = new MySQL(client);
     }
 
     public hasPermission(message: CommandMessage) {
@@ -41,12 +45,10 @@ module.exports = class SetupRolesCommand extends Command {
     }
 
     public async run(message: CommandMessage, args: { moderatorRole: Role, administratorRole: Role }): Promise<Message | Message[]> {
-        const mysql = new MySQL();
-
-        const [settingsExist]: any = await mysql.query('SELECT * FROM permissionroles WHERE serverID = ?', [message.guild.id]);
+        const [settingsExist]: any = await this.mysql.query('SELECT * FROM permissionroles WHERE serverID = ?', [message.guild.id]);
 
         if(settingsExist != undefined) {
-            await mysql.query('UPDATE permissionroles SET moderatorRole = ?, administratorRole = ? WHERE serverID = ?', [
+            await this.mysql.query('UPDATE permissionroles SET moderatorRole = ?, administratorRole = ? WHERE serverID = ?', [
                 args.moderatorRole.id,
                 args.administratorRole.id,
                 message.guild.id
@@ -55,7 +57,7 @@ module.exports = class SetupRolesCommand extends Command {
             (<CacheService>(<any>this.client).cache).updateServerPermission(new ServerPermissionRole(message.guild.id, args.moderatorRole.id, args.administratorRole.id));
         }
         else {
-            await mysql.query('INSERT INTO permissionroles SET serverID = ?, moderatorRole = ?, administratorRole = ?', [
+            await this.mysql.query('INSERT INTO permissionroles SET serverID = ?, moderatorRole = ?, administratorRole = ?', [
                 message.guild.id,
                 args.moderatorRole.id,
                 args.administratorRole.id,

@@ -12,6 +12,7 @@ export class Message {
     private guildId: string;
     private channelId: string;
     private message: string;
+    private mysql: MySQL;
 
     constructor(client: CommandoClient, message: CommandMessage) {
         this.client = client;
@@ -26,14 +27,14 @@ export class Message {
         
         this.channelId = message.channel.id;
         this.message = message.content;
+
+        this.mysql = new MySQL(client);
     }
 
     async start() {
         // Check if the author is a bot
         if(this.messageObject.author.bot)
             return;
-
-        const mysql = new MySQL();
 
         if(this.isCommandMessage(this.message)) {
             const commandMessage = this.message.slice(this.client.commandPrefix.length, this.message.length);
@@ -43,7 +44,7 @@ export class Message {
                 return;
             }
 
-            const [dbCommand]: any = await mysql.query('SELECT * FROM command WHERE commandName = ?', [commandMessage]);
+            const [dbCommand]: any = await this.mysql.query('SELECT * FROM command WHERE commandName = ?', [commandMessage]);
 
             // Check if the command actually exists
             if(dbCommand != undefined) {

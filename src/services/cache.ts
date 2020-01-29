@@ -1,21 +1,22 @@
 import { ServerPermissionRole } from "../models/ServerPermissionRole";
 import { Snowflake } from "discord.js";
 import { MySQL } from "../models/MySQL";
+import { CommandoClient } from "discord.js-commando";
 
 export class CacheService {
     private serverPermissionRoles: ServerPermissionRole[];
+    private mysql: MySQL;
 
-    constructor() {
+    constructor(client: CommandoClient) {
         this.serverPermissionRoles = [];
+        this.mysql = new MySQL(client);
     }
 
     /**
      * Initialize the cache
      */
     async initialize() {
-        const mysql = new MySQL();
-
-        const serverPermissionRoles: any = await mysql.query('SELECT * FROM permissionroles');
+        const serverPermissionRoles: any = await this.mysql.query('SELECT * FROM permissionroles');
 
         for(let serverPermissionRole of serverPermissionRoles) {
             this.addServerPermission(new ServerPermissionRole(serverPermissionRole.serverID, serverPermissionRole.moderatorRole, serverPermissionRole.administratorRole));

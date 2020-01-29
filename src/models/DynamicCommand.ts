@@ -1,4 +1,5 @@
 import { MySQL } from "./MySQL";
+import { CommandoClient } from "discord.js-commando";
 
 export enum CommandType {
     Global = "global",
@@ -14,14 +15,14 @@ export class DynamicCommand {
     commandCreatedAt: Date;
     mysql: MySQL;
 
-    constructor(serverId: string, commandName: string, commandType: CommandType, commandMessage: string, commandCreatedBy: string, commandCreatedAt: Date = new Date) {
+    constructor(client: CommandoClient, serverId: string, commandName: string, commandType: CommandType, commandMessage: string, commandCreatedBy: string, commandCreatedAt: Date = new Date) {
         this.serverId = serverId;
         this.commandName = commandName;
         this.commandType = commandType;
         this.commandMessage = commandMessage;
         this.commandCreatedBy = commandCreatedBy;
         this.commandCreatedAt = commandCreatedAt;
-        this.mysql = new MySQL();
+        this.mysql = new MySQL(client);
     }
     
     async create() {
