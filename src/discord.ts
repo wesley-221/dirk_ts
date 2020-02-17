@@ -47,6 +47,7 @@ export class DiscordTS {
 		// ----------------------------------------------------------------------------
 		this.client.registry.registerGroups([
 			['basic', 'Basic commands'],
+			['osu', 'osu! related commands'],
 			['owner', 'Commands for the owner'],
 			['serversetup', 'Various commands to manage a server'],
 			['globalcommands', 'Manage dynamic global commands'],

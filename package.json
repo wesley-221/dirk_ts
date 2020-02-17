@@ -39,6 +39,8 @@
 		"discord.js": "^11.3.2",
 		"discord.js-commando": "^0.10.0",
 		"mysql": "^2.17.1",
+		"request": "^2.88.2",
+		"request-promise": "^4.2.5",
 		"yamljs": "^0.3.0"
 	}
 }
