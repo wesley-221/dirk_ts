@@ -5,7 +5,6 @@ import { CommandoClient } from 'discord.js-commando';
 export class MySQL {
     private pool: mysql.Pool;
 
-
     constructor(client: CommandoClient) {
         this.pool = (<any>client).pool;
     }

@@ -31,6 +31,22 @@ export class DiscordTS {
 			commandPrefix: this.config.settings.prefix,			
 			unknownCommandResponse: false
 		});
+
+		// Create the mysql pool 
+		// ----------------------------------------------------------------------------
+		(<any>this.client).pool = mysql.createPool({
+            connectionLimit: 10,
+            host: this.config.settings.host,
+            user: this.config.settings.user,
+            password: this.config.settings.password, 
+            database: this.config.settings.database,
+            supportBigNumbers: true
+        });
+
+        (<any>this.client).pool.getConnection((err: Error, connection: any) => {
+            if(err) console.log(err);
+            if(connection) connection.release();
+		});
 	}
 
 	public async start() {
@@ -59,22 +75,6 @@ export class DiscordTS {
 		// ----------------------------------------------------------------------------
 		this.client.on('error', logError);
 		this.client.on('warn', logWarn);
-
-		// Create the mysql pool 
-		// ----------------------------------------------------------------------------
-		(<any>this.client).pool = mysql.createPool({
-            connectionLimit: 10,
-            host: this.config.settings.host,
-            user: this.config.settings.user,
-            password: this.config.settings.password, 
-            database: this.config.settings.database,
-            supportBigNumbers: true
-        });
-
-        (<any>this.client).pool.getConnection((err: Error, connection: any) => {
-            if(err) console.log(err);
-            if(connection) connection.release();
-		});
 		
 		// Setup cache
 		// ----------------------------------------------------------------------------
