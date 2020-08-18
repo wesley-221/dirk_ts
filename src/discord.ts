@@ -9,6 +9,7 @@ import { ServerJoin } from './events/ServerJoin';
 import { ServerLeave } from './events/ServerLeave';
 import { Message } from './events/Message';
 import { CacheService } from './services/cache';
+import { RideTheBus } from './models/ridethebus/RideTheBus';
 
 // DEBUG PREPARE
 // ----------------------------------------------------------------------------
@@ -68,7 +69,8 @@ export class DiscordTS {
 			['serversetup', 'Various commands to manage a server'],
 			['globalcommands', 'Manage dynamic global commands'],
 			['guildcommands', 'Manage dynamic guild commands'],
-			['teams', 'Manage team channels']
+			['teams', 'Manage team channels'],
+			['ridethebus', 'Commands for the drinking game Ride the bus']
 		]).registerDefaults().registerCommandsIn(path.join(__dirname, 'commands'));
 
 		// Setup logging
@@ -82,6 +84,11 @@ export class DiscordTS {
 		await cache.initialize();
 
 		(<any>this.client).cache = cache;
+
+		// Setup ride the bus game
+		// ----------------------------------------------------------------------------
+		const rideTheBus = new RideTheBus();
+		(<any>this.client).rideTheBus = rideTheBus;
 
 		// Setup various listeners
 		// ----------------------------------------------------------------------------
