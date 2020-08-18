@@ -1,6 +1,6 @@
 import { ServerPermissionRole } from "./ServerPermissionRole";
 import { CacheService } from "../services/cache";
-import { CommandoClient, CommandMessage } from "discord.js-commando";
+import { CommandoClient, CommandoMessage } from "discord.js-commando";
 
 export enum PermissionNames {
     Moderator = 2,
@@ -12,7 +12,7 @@ export class Permission {
     private allPermissions: { name: number, permissionCheck: Function }[] = [
         {
             name: PermissionNames.Moderator,
-            permissionCheck: (message: CommandMessage) => {
+            permissionCheck: (message: CommandoMessage) => {
                 try {
                     const serverPermissionRole: ServerPermissionRole | null = this.cacheService.getServerPermission(message.guild.id);
                     return serverPermissionRole != null && message.member.roles.get(serverPermissionRole.getModeratorRole()) != undefined;
@@ -24,7 +24,7 @@ export class Permission {
         }, 
         {
             name: PermissionNames.Administrator,
-            permissionCheck: (message: CommandMessage) => {
+            permissionCheck: (message: CommandoMessage) => {
                 try {
                     const serverPermissionRole: ServerPermissionRole | null = this.cacheService.getServerPermission(message.guild.id);
                     return serverPermissionRole != null && message.member.roles.get(serverPermissionRole.getAdministratorRole()) != undefined;
@@ -45,7 +45,7 @@ export class Permission {
      * @param message 
      * @param requiredPermission 
      */
-    checkPermission(message: CommandMessage, requiredPermission: PermissionNames): boolean {
+    checkPermission(message: CommandoMessage, requiredPermission: PermissionNames): boolean {
         let permissionLevel = 0;
         const permissionOrder = this.allPermissions.slice(0).sort((p, c) => p.name < c.name ? 1 : -1);
 

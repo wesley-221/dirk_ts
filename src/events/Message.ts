@@ -1,4 +1,4 @@
-import { CommandoClient, CommandMessage } from "discord.js-commando";
+import { CommandoClient, CommandoMessage } from "discord.js-commando";
 import { MySQL } from "../models/MySQL";
 
 export enum CommandTypes {
@@ -8,13 +8,13 @@ export enum CommandTypes {
 
 export class Message {
     private client: CommandoClient;
-    private messageObject: CommandMessage;
+    private messageObject: CommandoMessage;
     private guildId: string;
     private channelId: string;
     private message: string;
     private mysql: MySQL;
 
-    constructor(client: CommandoClient, message: CommandMessage) {
+    constructor(client: CommandoClient, message: CommandoMessage) {
         this.client = client;
         this.messageObject = message;
 

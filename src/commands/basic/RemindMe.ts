@@ -1,4 +1,4 @@
-import { Command, CommandoClient, CommandMessage } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { Message } from 'discord.js';
 import { sendEmbedSuccess } from '../../models/Misc';
 
@@ -30,7 +30,7 @@ module.exports = class RemindMeCommand extends Command {
         });
     }
 
-    public async run(message: CommandMessage, args: { amount: number, timeUnit: string, reminderMessage: string }): Promise<Message | Message[]> {
+    public async run(message: CommandoMessage, args: { amount: number, timeUnit: string, reminderMessage: string }): Promise<Message | Message[]> {
         const { amount, timeUnit, reminderMessage } = args;
 
         let finalTime = 0;
@@ -48,7 +48,7 @@ module.exports = class RemindMeCommand extends Command {
         }
 
         setTimeout(() => {
-            this.client.users.find(u => u.id == message.author.id).send({
+            this.client.users.cache.filter(u => u.id == message.author.id).first().send({
                 "embed": {
                     author: {
                         name: 'Reminder'

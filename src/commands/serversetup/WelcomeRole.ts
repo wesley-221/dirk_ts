@@ -1,4 +1,4 @@
-import { Command, CommandoClient, CommandMessage } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { Message } from 'discord.js';
 import { sendEmbedSuccess, sendEmbedError } from '../../models/Misc';
 import { MySQL } from '../../models/MySQL';
@@ -27,12 +27,12 @@ module.exports = class WelcomeRoleCommand extends Command {
         this.mysql = new MySQL(client);
     }
 
-    public hasPermission(message: CommandMessage) {
+    public hasPermission(message: CommandoMessage) {
         const permission = new Permission(this.client);
         return permission.checkPermission(message, PermissionNames.Administrator);
     }
 
-    public async run(message: CommandMessage, args: { role: string }): Promise<Message | Message[]> {
+    public async run(message: CommandoMessage, args: { role: string }): Promise<Message | Message[]> {
         const roleId = args.role.replace(/[<|@|&|>]/g, '');
 
         const role = message.guild.roles.get(roleId);

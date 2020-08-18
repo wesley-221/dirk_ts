@@ -1,4 +1,4 @@
-import { Command, CommandoClient, CommandMessage } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { Message } from 'discord.js';
 import { sendEmbedSuccess } from '../../models/Misc';
 import { MySQL } from '../../models/MySQL';
@@ -34,12 +34,12 @@ module.exports = class WelcomeMessageCommand extends Command {
         this.mysql = new MySQL(client);
     }
 
-    public hasPermission(message: CommandMessage) {
+    public hasPermission(message: CommandoMessage) {
         const permission = new Permission(this.client);
         return permission.checkPermission(message, PermissionNames.Administrator);
     }
 
-    public async run(message: CommandMessage, args: { status: string, message: string }): Promise<Message | Message[]> {
+    public async run(message: CommandoMessage, args: { status: string, message: string }): Promise<Message | Message[]> {
         if(args.status == "enable") {
             const [recordExist]: any = await this.mysql.query('SELECT welcomeEnabled FROM wmtoggle WHERE serverID = ? AND channelID = ?', [message.guild.id, message.channel.id]);
 

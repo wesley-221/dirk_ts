@@ -1,4 +1,4 @@
-import { Command, CommandoClient, CommandMessage } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { Message } from 'discord.js';
 import { sendEmbedSuccess, sendEmbedError } from '../../models/Misc';
 import { MySQL } from '../../models/MySQL';
@@ -37,7 +37,7 @@ module.exports = class CreateGlobalCommandCommand extends Command {
         this.mysql = new MySQL(client);
     }
 
-    public async run(message: CommandMessage, args: { commandName: string, message: string }): Promise<Message | Message[]> {
+    public async run(message: CommandoMessage, args: { commandName: string, message: string }): Promise<Message | Message[]> {
         // Check for "static" commands
         if(this.client.registry.findCommands(args.commandName).length > 0) {
             return sendEmbedError(message, `The command \`${args.commandName}\` already exists. Please try a different name.`);

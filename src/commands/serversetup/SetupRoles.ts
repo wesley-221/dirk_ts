@@ -1,4 +1,4 @@
-import { Command, CommandoClient, CommandMessage } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { Message, Role } from 'discord.js';
 import { sendEmbedSuccess } from '../../models/Misc';
 import { MySQL } from '../../models/MySQL';
@@ -39,12 +39,12 @@ module.exports = class SetupRolesCommand extends Command {
         this.mysql = new MySQL(client);
     }
 
-    public hasPermission(message: CommandMessage) {
+    public hasPermission(message: CommandoMessage) {
         const permission = new Permission(this.client);
         return permission.checkPermission(message, PermissionNames.Administrator);
     }
 
-    public async run(message: CommandMessage, args: { moderatorRole: Role, administratorRole: Role }): Promise<Message | Message[]> {
+    public async run(message: CommandoMessage, args: { moderatorRole: Role, administratorRole: Role }): Promise<Message | Message[]> {
         const [settingsExist]: any = await this.mysql.query('SELECT * FROM permissionroles WHERE serverID = ?', [message.guild.id]);
 
         if(settingsExist != undefined) {

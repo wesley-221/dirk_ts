@@ -1,4 +1,4 @@
-import { Command, CommandoClient, CommandMessage } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { Message } from 'discord.js';
 import { getBeatmapIdFromUrl, Mods, getModsFromBit, getBitFromMods, doesModExist } from '../../models/OsuHelper';
 import { sendEmbed, sendEmbedError } from '../../models/Misc';
@@ -27,7 +27,7 @@ module.exports = class CtbPPCalc extends Command {
         });
     }
 
-    public async run(message: CommandMessage, args: { beatmapUrl: string, mods: string }): Promise<Message | Message[]> {
+    public async run(message: CommandoMessage, args: { beatmapUrl: string, mods: string }): Promise<Message | Message[]> {
         const { beatmapUrl, mods } = args;
         const beatmapId: number | null = getBeatmapIdFromUrl(beatmapUrl);
         const modBit = getBitFromMods(mods);

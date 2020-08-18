@@ -1,4 +1,4 @@
-import { CommandMessage } from "discord.js-commando";
+import { CommandoMessage } from "discord.js-commando";
 import { Message } from "discord.js";
 
 /**
@@ -7,7 +7,7 @@ import { Message } from "discord.js";
  * @param text 
  * @param color 
  */
-export function sendEmbed(message: CommandMessage, text: string, color: number): Promise<Message | Message[]> {
+export function sendEmbed(message: CommandoMessage, text: string, color: number): Promise<Message | Message[]> {
     return message.embed({
         color,
         description: text
@@ -19,7 +19,7 @@ export function sendEmbed(message: CommandMessage, text: string, color: number):
  * @param message 
  * @param text 
  */
-export function sendEmbedError(message: CommandMessage, text: string): Promise<Message | Message[]> {
+export function sendEmbedError(message: CommandoMessage, text: string): Promise<Message | Message[]> {
     return sendEmbed(message, `:no_entry: | Something went wrong for ${message.author}: \n${text}`, 0xFF0000);
 }
 
@@ -28,7 +28,7 @@ export function sendEmbedError(message: CommandMessage, text: string): Promise<M
  * @param message 
  * @param text 
  */
-export function sendEmbedSuccess(message: CommandMessage, text: string): Promise<Message | Message[]> {
+export function sendEmbedSuccess(message: CommandoMessage, text: string): Promise<Message | Message[]> {
     return sendEmbed(message, `:white_check_mark: | ${text}`, 0x00FF00);
 }
 

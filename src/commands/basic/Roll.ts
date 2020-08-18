@@ -1,4 +1,4 @@
-import { Command, CommandoClient, CommandMessage } from 'discord.js-commando';
+import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando';
 import { Message } from 'discord.js';
 
 module.exports = class RollCommand extends Command {
@@ -11,7 +11,7 @@ module.exports = class RollCommand extends Command {
         });
     }
 
-    public async run(message: CommandMessage): Promise<Message | Message[]> {
+    public async run(message: CommandoMessage): Promise<Message | Message[]> {
         const roll = Math.floor(Math.random() * 100) + 1;
         return message.say(`${message.author} rolled ${roll}.`);
     }
